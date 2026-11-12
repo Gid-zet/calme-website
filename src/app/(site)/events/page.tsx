@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Newsletter } from "@/components/sections/Newsletter";
 import { SipAndPaint } from "@/components/sections/SipAndPaint";
+import { TalkShow } from "@/components/sections/TalkShow";
 import { PageHero } from "@/components/ui/PageHero";
 import Link from "next/link";
 
@@ -20,6 +21,7 @@ export default function EventsPage() {
         </div>
       </PageHero>
       <SipAndPaint cta={false} />
+      <TalkShow />
       <Newsletter />
     </>
   );

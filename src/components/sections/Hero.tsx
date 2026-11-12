@@ -53,17 +53,18 @@ export function Hero() {
 
         <Reveal className="relative mx-auto h-[400px] w-full max-w-[560px] md:h-[480px] lg:h-[560px] lg:max-w-none" delay={120}>
           <div className="anim-morph absolute inset-[30px_0_0_30px] border-[2.5px] border-ink bg-blue" style={{ borderRadius: "58% 42% 55% 45% / 48% 55% 45% 52%" }} />
-          <figure className="polaroid left-[2%] top-[4%] h-[68%] w-[58%] -rotate-6">
-            <div className="ph">
-              <Image src="/images/group-trio.jpg" alt="Three participants holding their paintings at CalMe's Sip & Paint" fill sizes="(max-width: 1024px) 60vw, 340px" className="object-cover" priority />
+          <figure className="polaroid left-0 top-[16%] w-full -rotate-3">
+            <div className="ph aspect-[3/2]" style={{ height: "auto" }}>
+              <Image
+                src="/images/team-acity.jpg"
+                alt="The CalMe Mental Health Group team together at Academic City University, Ghana"
+                fill
+                sizes="(max-width: 1024px) 90vw, 600px"
+                className="object-cover object-[center_62%]"
+                priority
+              />
             </div>
-            <figcaption>sip &amp; paint ♡</figcaption>
-          </figure>
-          <figure className="polaroid right-0 top-[34%] h-[56%] w-1/2 rotate-[5deg]">
-            <div className="ph">
-              <Image src="/images/duo.jpg" alt="Two participants smiling with their paintings" fill sizes="(max-width: 1024px) 50vw, 290px" className="object-cover" priority />
-            </div>
-            <figcaption>good vibes only</figcaption>
+            <figcaption>the CalMe family ♡</figcaption>
           </figure>
           <div className="sticker anim-spin right-[4%] top-0 h-[90px] w-[90px] rounded-full bg-sun font-hand text-[1.15rem] leading-none md:h-[118px] md:w-[118px] md:text-[1.45rem]">
             <span className="anim-spin-rev block">you are<br />not alone</span>

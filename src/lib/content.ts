@@ -126,6 +126,14 @@ export const crisisLines = [
   { label: "Emergency", value: "Call 911 or go to your nearest emergency room" },
 ];
 
+export const talkShow = {
+  venue: "Academic City University, Ghana",
+  photos: [
+    { src: "/images/acity-guest-speaker.jpg", alt: "Guest speaker addressing students at CalMe's mental health talk show, Academic City University", cap: "our guest speaker 🎤", pos: "center 30%" },
+    { src: "/images/acity-calme-host.jpg", alt: "A CalMe team member hosting the talk show at Academic City University", cap: "the CalMe team ♡", pos: "center 30%" },
+  ],
+};
+
 export const sipAndPaint = {
   photos: [
     { src: "/images/group-five.jpg", w: 1400, h: 933, alt: "Five participants holding their paintings in front of a beach mural", cap: "the whole crew 🎨", pos: "center 40%" },
