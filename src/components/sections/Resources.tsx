@@ -15,7 +15,7 @@ export function CrisisCard() {
           <b>{c.value}</b>
         </div>
       ))}
-      <Link href="/book" className="btn btn-white mt-5 w-full justify-center">
+      <Link href="/psychologists" className="btn btn-white mt-5 w-full justify-center">
         Book with a professional
       </Link>
     </aside>

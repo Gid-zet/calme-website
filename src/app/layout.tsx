@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${jakarta.variable} ${caveat.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${fraunces.variable} ${jakarta.variable} ${caveat.variable}`}>
       <body className="min-h-screen">{children}</body>
     </html>
   );

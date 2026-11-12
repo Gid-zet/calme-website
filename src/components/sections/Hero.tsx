@@ -23,7 +23,7 @@ export function Hero() {
           </h1>
           <p className="lede">{site.description}</p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Link href="/book" className="btn btn-primary">
+            <Link href="/psychologists" className="btn btn-primary">
               Book appointment <Icon name="arrow" strokeWidth={2.5} />
             </Link>
             <Link href="/resources" className="btn btn-white">

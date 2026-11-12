@@ -25,6 +25,7 @@ export const site = {
 };
 
 export const nav = [
+  { href: "/psychologists", label: "Find a psychologist" },
   { href: "/about", label: "About" },
   { href: "/programs", label: "Programs" },
   { href: "/events", label: "Events" },
@@ -153,7 +154,7 @@ export const moods = [
   { key: "great", face: "😄", label: "Great", title: "Love that for you! 🌞", body: "Bottle this feeling: what's going well today? Share the good vibes at our next event.", link: { href: "/events", label: "See events" } },
   { key: "okay", face: "🙂", label: "Okay", title: "Steady is good 🌿", body: "A little self-care keeps okay days okay. Browse our toolkit for small daily habits.", link: { href: "/resources", label: "Open the toolkit" } },
   { key: "meh", face: "😐", label: "Meh", title: "Meh days are valid 🫧", body: "Try a minute of box breathing. It's a small reset that can shift your whole afternoon.", link: { href: "/#breathe", label: "Breathe with us" } },
-  { key: "low", face: "😔", label: "Low", title: "We're glad you checked in 💙", body: "You don't have to carry this alone. Talking to someone can help.", link: { href: "/book", label: "Book a session" } },
+  { key: "low", face: "😔", label: "Low", title: "We're glad you checked in 💙", body: "You don't have to carry this alone. Talking to someone can help.", link: { href: "/psychologists", label: "Find a psychologist" } },
   { key: "heavy", face: "😣", label: "Heavy", title: "Thank you for being honest 🤍", body: "If things feel overwhelming, please reach out now. Our crisis contacts are listed on the resources page.", link: { href: "/resources#crisis", label: "Get help now" } },
 ] as const;
 
