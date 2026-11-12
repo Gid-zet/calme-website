@@ -10,9 +10,16 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 
+// By default the tests use a throwaway embedded database. Set TEST_DATABASE_URL to an EMPTY, disposable
+// Postgres database to run the same tests through the production driver (postgres.js). Never point it at real data.
 const DIR = path.join(process.cwd(), ".data", "test-booking");
-fs.rmSync(DIR, { recursive: true, force: true });
-process.env.PGLITE_DIR = DIR;
+const REAL = process.env.TEST_DATABASE_URL;
+if (REAL) process.env.DATABASE_URL = REAL;
+else {
+  delete process.env.DATABASE_URL;
+  fs.rmSync(DIR, { recursive: true, force: true });
+  process.env.PGLITE_DIR = DIR;
+}
 process.env.APP_URL = "http://test.local";
 process.env.RESEND_API_KEY = "";
 
@@ -33,7 +40,12 @@ async function main() {
   const s = await import("../src/db/schema");
   const booking = await import("../src/lib/server/booking");
   const { eq } = await import("drizzle-orm");
+  if (REAL) {
+    const { migrate } = await import("drizzle-orm/postgres-js/migrator");
+    await migrate((await getDb()) as never, { migrationsFolder: path.join(process.cwd(), "drizzle") });
+  }
   const db = await getDb();
+  console.log(`Database: ${REAL ? "PostgreSQL via postgres.js" : "embedded PGlite"}`);
 
   // Fixtures: one verified psychologist (Mon–Fri 09:00–12:00 Accra, 50 min + 10 min break), clients.
   const [psych] = await db.insert(s.users).values({ email: "p@t.test", name: "Psy Chologist", role: "psychologist", emailVerifiedAt: new Date() }).returning();
@@ -154,8 +166,71 @@ async function main() {
     assert.ok((await booking.releaseStaleRequests()) >= 1);
   });
 
+  console.log("\nRate limiting & read models");
+  const { rateLimit, clearRateLimit } = await import("../src/lib/server/rate-limit");
+  const directory = await import("../src/lib/server/directory");
+  const admin = await import("../src/lib/server/admin");
+  const practice = await import("../src/lib/server/practice");
+  const appts = await import("../src/lib/server/appointments-query");
+  const { unreadCount, listNotifications } = await import("../src/lib/server/notifications");
+  const { getSettings } = await import("../src/lib/server/settings");
+  const { logActivity, notify } = await import("../src/lib/server/audit");
+
+  await test("rate limiter counts within a window and blocks after the limit", async () => {
+    const key = `test:${Date.now()}`;
+    for (let i = 1; i <= 3; i++) assert.equal((await rateLimit(key, 3, 60)).ok, true);
+    assert.equal((await rateLimit(key, 3, 60)).ok, false);
+    await clearRateLimit(key);
+    assert.equal((await rateLimit(key, 3, 60)).ok, true);
+  });
+
+  await test("directory search, filters, profile and recently viewed", async () => {
+    const all = await directory.searchPsychologists({ sort: "soonest" });
+    assert.ok(all.some((p) => p.id === psych.id));
+    const filtered = await directory.searchPsychologists({ q: "Psy", lang: "English", mode: "online", maxPrice: 500, minExp: 0, available: "week", sort: "price" });
+    assert.ok(Array.isArray(filtered));
+    assert.ok(await directory.getPsychologistProfile(psych.id));
+    await directory.recordProfileView(a.id, psych.id);
+    await directory.recordProfileView(a.id, psych.id);
+    assert.equal((await directory.recentlyViewed(a.id)).length, 1);
+    assert.ok(Array.isArray(await directory.recommendedFor(a.id)));
+  });
+
+  await test("admin read models", async () => {
+    await logActivity({ actorId: a.id, action: "auth.login", entityType: "user", entityId: a.id, metadata: { test: true } });
+    const k = await admin.platformKpis();
+    assert.ok(k.users >= 4 && k.appointments >= 1);
+    const t = await admin.weeklyTrends(12);
+    assert.equal(t.bookings.length, 12);
+    assert.equal(t.signups.length, 12);
+    assert.ok((await admin.listUsers({ q: "t.test", role: "client", page: 1 })).total >= 3);
+    assert.ok((await admin.listAppointments({ psychologistId: psych.id, client: "a", status: "confirmed", from: at(0), to: at(23), page: 1 })).rows.length >= 0);
+    assert.ok(Array.isArray(await admin.verificationQueue()));
+    assert.ok((await admin.recentActivity({ action: "auth.", page: 1 })).total >= 1);
+    assert.ok(Array.isArray(await admin.psychologistOptions()));
+  });
+
+  await test("practice and client read models", async () => {
+    const p = await practice.getPractice(psych.id);
+    assert.equal(p.rules.length, 5);
+    const st = await practice.practiceStats(psych.id);
+    assert.ok(st.total >= 1);
+    assert.ok(Array.isArray(await practice.bookingsOnBlockedDays(psych.id, "Africa/Accra")));
+    assert.ok(Array.isArray(await practice.overridesFor(psych.id, "2000-01-01")));
+    assert.ok(Array.isArray(await practice.verificationHistory(psych.id)));
+    assert.ok((await appts.listForClient(a.id, "upcoming")).length >= 1);
+    assert.ok(Array.isArray(await appts.listForClient(a.id, "past")));
+    const list = await appts.listForPsychologist(psych.id, { from: new Date(), statuses: ["confirmed"] });
+    assert.ok(await appts.getAppointmentFor(list[0].id, psych.id, "psychologist"));
+    await notify(a.id, { type: "test", title: "Hello" });
+    assert.ok((await unreadCount(a.id)) >= 1);
+    assert.ok((await listNotifications(a.id)).length >= 1);
+    assert.equal((await getSettings()).cancellationWindowHours, 24);
+    assert.ok(await booking.sendReminders() >= 0);
+  });
+
   console.log(`\n${passed} passed${process.exitCode ? ", some FAILED" : ""}`);
-  fs.rmSync(DIR, { recursive: true, force: true });
+  if (!REAL) fs.rmSync(DIR, { recursive: true, force: true });
   process.exit(process.exitCode ?? 0);
 }
 
