@@ -6,7 +6,7 @@ import { useState } from "react";
 import { nav } from "@/lib/content";
 import { Logo } from "./Logo";
 
-export function Navbar() {
+export function Navbar({ account, mobileAccount }: { account?: React.ReactNode; mobileAccount?: React.ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -31,10 +31,8 @@ export function Navbar() {
             })}
           </ul>
           <div className="hidden items-center gap-2 lg:flex">
-            <Link href="/sign-in" className="rounded-full px-3.5 py-2 text-[.95rem] font-semibold hover:bg-sun-soft">
-              Sign in
-            </Link>
-            <Link href="/book" className="btn btn-primary btn-sm">
+            {account}
+            <Link href="/psychologists" className="btn btn-primary btn-sm">
               Book appointment
             </Link>
           </div>
@@ -63,10 +61,8 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
-          <Link href="/sign-in" onClick={() => setOpen(false)} className="rounded-2xl px-4 py-3 text-lg font-bold hover:bg-sun-soft">
-            Sign in
-          </Link>
-          <Link href="/book" onClick={() => setOpen(false)} className="btn btn-primary mt-2 justify-center">
+          <div onClick={() => setOpen(false)}>{mobileAccount}</div>
+          <Link href="/psychologists" onClick={() => setOpen(false)} className="btn btn-primary mt-2 justify-center">
             Book appointment
           </Link>
         </nav>

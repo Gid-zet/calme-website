@@ -52,7 +52,7 @@ export async function Footer() {
                   <Link href={n.href} className="hover:text-sun">{n.label}</Link>
                 </li>
               ))}
-              <li><Link href="/book" className="hover:text-sun">Book appointment</Link></li>
+              <li><Link href="/psychologists" className="hover:text-sun">Book appointment</Link></li>
             </ul>
           </div>
           <div>
