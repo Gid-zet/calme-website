@@ -10,3 +10,6 @@ export default async function SignUpPage({ searchParams }: PageProps<"/sign-up">
   const [sp, specs] = await Promise.all([searchParams, getActiveSpecializations()]);
   return <SignUpForm initialRole={sp.role === "psychologist" ? "psychologist" : "client"} specializations={specs} languages={LANGUAGES} />;
 }
+
+// Reads the URL (redirect target / role / status), so it renders at request time.
+export const instant = false;

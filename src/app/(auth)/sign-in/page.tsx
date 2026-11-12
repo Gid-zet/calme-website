@@ -14,3 +14,6 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
   const notice = Object.keys(NOTICES).find((k) => sp[k] !== undefined);
   return <SignInForm next={next} notice={notice ? NOTICES[notice] : undefined} />;
 }
+
+// Reads the URL (redirect target / role / status), so it renders at request time.
+export const instant = false;

@@ -28,3 +28,6 @@ export default async function InvitePage({ searchParams }: PageProps<"/invite">)
     </div>
   );
 }
+
+// One-time links: always checked against the database at request time.
+export const instant = false;

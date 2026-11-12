@@ -1,5 +1,6 @@
 import "server-only";
 import { and, eq, gt, isNull } from "drizzle-orm";
+import { connection } from "next/server";
 import { getDb } from "@/db";
 import { authTokens, users } from "@/db/schema";
 import { randomToken, sha256 } from "./crypto";
@@ -36,6 +37,7 @@ export async function consumeToken(token: string, type: TokenType): Promise<stri
 
 /** Looks a token up without consuming it (to render the reset / invite form). */
 export async function peekToken(token: string, type: TokenType) {
+  await connection(); // expiry depends on the current time: always evaluate per request
   if (!token || token.length > 100) return null;
   const db = await getDb();
   const [row] = await db

@@ -19,3 +19,6 @@ export default async function VerifyEmailPage({ searchParams }: PageProps<"/veri
     </div>
   );
 }
+
+// Reads the URL (redirect target / role / status), so it renders at request time.
+export const instant = false;

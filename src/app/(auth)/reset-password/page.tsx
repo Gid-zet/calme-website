@@ -27,3 +27,6 @@ export default async function ResetPasswordPage({ searchParams }: PageProps<"/re
     </div>
   );
 }
+
+// One-time links: always checked against the database at request time.
+export const instant = false;
